@@ -3,6 +3,7 @@
 namespace MagicProperties;
 
 use MagicProperties\Exceptions\InvalidPropertyCallException;
+use Prophecy\Exception\Doubler\MethodNotFoundException;
 
 /**
  * Allow access to a getter implicitly
@@ -21,8 +22,8 @@ trait AutoAccessorTrait
      * Get the value of a gettable property
      *
      * @param string $prop
-     * @throws MagicProperties\Exceptions\InvalidPropertyCallException
-     * @return void
+     * @return mixed
+     * @throws InvalidPropertyCallException
      */
     final public function __get($prop)
     {
@@ -33,7 +34,7 @@ trait AutoAccessorTrait
             );
         }
 
-        if (in_array($prop, $this->gettables)) {
+        if (in_array($prop, $this->gettables) || $this->isImplementedMethodGettable($prop)) {
             return $this->callGetter($prop);
         }
 
@@ -57,8 +58,25 @@ trait AutoAccessorTrait
             return call_user_func([__CLASS__, toCamelCase($prop, 'get')]);
         } elseif (method_exists(__CLASS__, toSnakeCase($prop, 'get'))) {
             return call_user_func([__CLASS__, toSnakeCase($prop, 'get')]);
+        } else {
+            throw new MethodNotFoundException("",__CLASS__,toCamelCase($prop, 'get'));
         }
         
         return $this->$prop;
     }
+
+    /**
+     * @param $prop
+     * @return mixed
+     */
+    private function isImplementedMethodGettable($prop)
+    {
+        if (method_exists(__CLASS__, toCamelCase($prop, 'get')))
+            return true;
+        else
+            return false;
+    }
+
+
+
 }

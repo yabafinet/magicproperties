@@ -10,11 +10,13 @@ class FakeUser
     use AutoAccessorTrait, AutoMutatorTrait;
 
     private $username;
-    private $password = 'some_secure_password';
+    private $password   = 'some_secure_password';
+    private $address    = 'other_property';
+    private $lastname   = 'last_name';
 
     public function __construct($username)
     {
-        $this->username = $username;
+        $this->username  = $username;
         $this->gettables = ['username'];
         $this->settables = ['username'];
     }
@@ -30,5 +32,10 @@ class FakeUser
             throw new InvalidArgumentException('Username must be of type string');
         }
         $this->username = $val;
+    }
+
+    public function getAddress()
+    {
+        return sprintf('%s', $this->address);
     }
 }

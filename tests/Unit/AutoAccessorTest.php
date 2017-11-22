@@ -15,10 +15,31 @@ class AutoAccessorTest extends TestCase
         $this->fakeUser = new FakeUser('maxalmonte14');
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function canAccessToPrivateGettableProperty()
     {
         $this->assertEquals('Your username is maxalmonte14', $this->fakeUser->username);
+    }
+
+    /**
+     * @test
+     */
+    public function canAccessToPrivatePropertyImplementingGettableMethod()
+    {
+        $this->assertEquals('other_property', $this->fakeUser->address);
+    }
+
+    /**
+     * @test
+     */
+    public function cannotAccessToPrivatePropertyImplementingGettableMethod()
+    {
+        $this->expectException('MagicProperties\Exceptions\InvalidPropertyCallException');
+        $this->expectExceptionMessage('Property lastname is not accessible out of the class.');
+        $this->expectExceptionCode(2);
+        $this->assertEquals('last_name', $this->fakeUser->lastname);
     }
 
     /**
